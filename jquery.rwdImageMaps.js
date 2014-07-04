@@ -64,7 +64,12 @@
 					
 					w = $that.width()/w;
 					h = $that.height()/h;
-
+					
+					if (w <= 0 || h <= 0) {
+						// Prevent output of 0,0,0,0 coords if the image is hidden 
+						return;
+					}
+					
 					map = $that.attr('usemap').replace('#', '');
 					
 					$('map[name="' + map + '"]').find('area').each(function() {
