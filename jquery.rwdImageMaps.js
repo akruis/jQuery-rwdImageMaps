@@ -70,9 +70,9 @@
 						return;
 					}
 					
-					map = $that.attr('usemap').replace('#', '');
-					
-					$('map[name="' + map + '"]').find('area').each(function() {
+					map = $that.attr('usemap').substring(1);
+					map = $('map[name="' + map + '"]');
+					map.find('area').each(function() {
 						var $this = $(this);
 						if (!$this.data(c))
 							$this.data(c, $this.attr(c));
@@ -88,6 +88,7 @@
 						}
 						$this.attr(c, coordsPercent.toString());
 					});
+					map.trigger('rwdImageMaps_changed', [that]);
 				}).attr('src', $that.attr('src'));
 			});
 		};
