@@ -46,8 +46,8 @@
 				
 				// Since WebKit doesn't know the height until after the image has loaded, perform everything in an onload copy
 				$('<img />').load(function() {
-					var attrW = 'width',
-						attrH = 'height',
+					var attrW = 'naturalWidth',
+						attrH = 'naturalHeight',
 						w = $that.attr(attrW),
 						h = $that.attr(attrH);
 					
