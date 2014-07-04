@@ -48,8 +48,10 @@
 				$('<img />').load(function() {
 					var attrW = 'naturalWidth',
 						attrH = 'naturalHeight',
+						c = 'coords',
 						w = $that.attr(attrW),
-						h = $that.attr(attrH);
+						h = $that.attr(attrH),
+						map;
 					
 					if (!w || !h) {
 						var temp = new Image();
@@ -60,10 +62,10 @@
 							h = temp.height;
 					}
 					
-					var wPercent = $that.width()/100,
-						hPercent = $that.height()/100,
-						map = $that.attr('usemap').replace('#', ''),
-						c = 'coords';
+					w = $that.width()/w;
+					h = $that.height()/h;
+
+					map = $that.attr('usemap').replace('#', '');
 					
 					$('map[name="' + map + '"]').find('area').each(function() {
 						var $this = $(this);
@@ -75,9 +77,9 @@
 						
 						for (var i = 0; i < coordsPercent.length; ++i) {
 							if (i % 2 === 0)
-								coordsPercent[i] = parseInt(((coords[i]/w)*100)*wPercent);
+								coordsPercent[i] = parseInt(coords[i]*w);
 							else
-								coordsPercent[i] = parseInt(((coords[i]/h)*100)*hPercent);
+								coordsPercent[i] = parseInt(coords[i]*h);
 						}
 						$this.attr(c, coordsPercent.toString());
 					});
