@@ -51,7 +51,7 @@
 						c = 'coords',
 						w = $that.attr(attrW),
 						h = $that.attr(attrH),
-						map;
+						map, scale;
 					
 					if (!w || !h) {
 						var temp = new Image();
@@ -72,6 +72,13 @@
 					
 					map = $that.attr('usemap').substring(1);
 					map = $('map[name="' + map + '"]');
+					scale = map.data('rwdImageMaps.scale'); 
+					if($.isArray(scale) && scale[0] == w && scale[1] == h) {
+						// already scaled
+						return;
+					}
+					map.data('rwdImageMaps.scale', [w, h]);
+					
 					map.find('area').each(function() {
 						var $this = $(this);
 						if (!$this.data(c))
