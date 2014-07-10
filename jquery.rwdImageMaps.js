@@ -25,18 +25,19 @@
 		var $img = this,
 			defaults = {
 				debounce: false,
-				timeout: 300 
+				timeout: 300,
+				triggerAlways: false,
 			},
 			// If options is an object, overwrite defaults with options.
 			opts = $.extend(defaults, typeof options === 'object' ? options : {}),
-			action;
+			action, rwdImageMap, invalidate, debounce;
 
 		// If options is a string, use it as the action.
 		if (typeof options === 'string') {
 			action = options;
 		}
 
-		var rwdImageMap = function() {
+		rwdImageMap = function() {
 			$img.each(function() {
 				if (typeof($(this).attr('usemap')) == 'undefined')
 					return;
@@ -74,11 +75,17 @@
 					map = $('map[name="' + map + '"]');
 					scale = map.data('rwdImageMaps.scale'); 
 					if($.isArray(scale) && scale[0] == w && scale[1] == h) {
+						if(opts.triggerAlways) {
+							map.trigger('rwdImageMaps_invalid', [that], false);
+							map.trigger('rwdImageMaps_changed', [that], false);							
+						}
+
 						// already scaled
 						return;
 					}
 					map.data('rwdImageMaps.scale', [w, h]);
 					
+					map.trigger('rwdImageMaps_invalid', [that], true);
 					map.find('area').each(function() {
 						var $this = $(this);
 						if (!$this.data(c))
@@ -95,13 +102,25 @@
 						}
 						$this.attr(c, coordsPercent.toString());
 					});
-					map.trigger('rwdImageMaps_changed', [that]);
+					map.trigger('rwdImageMaps_changed', [that], true);
 				}).attr('src', $that.attr('src'));
 			});
 		};
-		var debounce = function (fun, mil) {
+		invalidate = function() {
+			$img.each(function() {
+				var $this, map;
+				$this = $(this);
+				if (typeof($this.attr('usemap')) == 'undefined')
+					return;
+				var map = $this.attr('usemap').substring(1);
+				map = $('map[name="' + map + '"]');
+				map.trigger('rwdImageMaps_invalid', [this]);
+			});
+		};
+		debounce = function (fun, mil) {
 			var timer;
 			return function () {
+				invalidate();
 				clearTimeout(timer);
 					timer = setTimeout(function () {
 					fun();
